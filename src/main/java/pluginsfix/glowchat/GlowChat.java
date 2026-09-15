@@ -7,8 +7,11 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import pluginsfix.glowchat.command.AdminChatCommand;
 import pluginsfix.glowchat.command.ChatCommand;
 import pluginsfix.glowchat.command.ChatModeCommand;
+import pluginsfix.glowchat.command.DonorChatCommand;
+import pluginsfix.glowchat.command.ModChatCommand;
 import pluginsfix.glowchat.config.GlowChatConfig;
 import pluginsfix.glowchat.listener.AdvancementListener;
 import pluginsfix.glowchat.listener.ChatListener;
@@ -73,6 +76,27 @@ public final class GlowChat extends JavaPlugin {
             ChatModeCommand handler = new ChatModeCommand(this);
             cmCmd.setExecutor(handler);
             cmCmd.setTabCompleter(handler);
+        }
+
+        PluginCommand acCmd = getCommand("ac");
+        if (acCmd != null) {
+            AdminChatCommand handler = new AdminChatCommand(this);
+            acCmd.setExecutor(handler);
+            acCmd.setTabCompleter(handler);
+        }
+
+        PluginCommand mcCmd = getCommand("mc");
+        if (mcCmd != null) {
+            ModChatCommand handler = new ModChatCommand(this);
+            mcCmd.setExecutor(handler);
+            mcCmd.setTabCompleter(handler);
+        }
+
+        PluginCommand dcCmd = getCommand("dc");
+        if (dcCmd != null) {
+            DonorChatCommand handler = new DonorChatCommand(this);
+            dcCmd.setExecutor(handler);
+            dcCmd.setTabCompleter(handler);
         }
     }
 

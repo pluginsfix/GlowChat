@@ -8,6 +8,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import pluginsfix.glowchat.GlowChat;
+import pluginsfix.glowchat.command.AdminChatCommand;
+import pluginsfix.glowchat.command.DonorChatCommand;
+import pluginsfix.glowchat.command.ModChatCommand;
 import pluginsfix.glowchat.config.GlowChatConfig;
 import pluginsfix.glowchat.util.ColorUtil;
 import pluginsfix.glowchat.util.Text;
@@ -26,9 +29,49 @@ public class ChatListener implements Listener {
             return;
         }
 
-        event.setCancelled(true);
         Player player = event.getPlayer();
         String message = event.getMessage();
+
+        if (config.isAdminChatEnabled() && config.getAdminChatPrefix() != null && !config.getAdminChatPrefix().isEmpty()) {
+            if (message.startsWith(config.getAdminChatPrefix())) {
+                if (player.hasPermission("glowchat.adminchat")) {
+                    event.setCancelled(true);
+                    String chatMsg = message.substring(config.getAdminChatPrefix().length()).trim();
+                    if (!chatMsg.isEmpty()) {
+                        AdminChatCommand.sendAdminChatMessage(player, chatMsg, config);
+                    }
+                    return;
+                }
+            }
+        }
+
+        if (config.isModChatEnabled() && config.getModChatPrefix() != null && !config.getModChatPrefix().isEmpty()) {
+            if (message.startsWith(config.getModChatPrefix())) {
+                if (player.hasPermission("glowchat.modchat") || player.hasPermission("glowchat.adminchat")) {
+                    event.setCancelled(true);
+                    String chatMsg = message.substring(config.getModChatPrefix().length()).trim();
+                    if (!chatMsg.isEmpty()) {
+                        ModChatCommand.sendModChatMessage(player, chatMsg, config);
+                    }
+                    return;
+                }
+            }
+        }
+
+        if (config.isDonorChatEnabled() && config.getDonorChatPrefix() != null && !config.getDonorChatPrefix().isEmpty()) {
+            if (message.startsWith(config.getDonorChatPrefix())) {
+                if (player.hasPermission("glowchat.donorchat") || player.hasPermission("glowchat.adminchat")) {
+                    event.setCancelled(true);
+                    String chatMsg = message.substring(config.getDonorChatPrefix().length()).trim();
+                    if (!chatMsg.isEmpty()) {
+                        DonorChatCommand.sendDonorChatMessage(player, chatMsg, config);
+                    }
+                    return;
+                }
+            }
+        }
+
+        event.setCancelled(true);
         String globalPrefix = config.getGlobalPrefix();
 
         boolean localDisabled = config.isLocalDisabled();
