@@ -1,0 +1,52 @@
+name: GlowChat
+version: '${project.version}'
+main: pluginsfix.glowchat.GlowChat
+api-version: '1.16'
+prefix: GlowChat
+authors: [pluginsfix, talixty]
+description: Simple, optimized and functional chat plugin
+website: https://t.me/vibestudiomc
+
+commands:
+  chat:
+    description: Main command for GlowChat
+    aliases:
+      - glowchat
+      - gc
+    usage: /<command> [reload]
+  chatmode:
+    description: Toggle chat mode between global and local
+    permission: glowchat.chatmode
+    aliases:
+      - mode
+      - cm
+    usage: /<command>
+
+permissions:
+  glowchat.reload:
+    description: Allows reloading GlowChat configuration
+    default: op
+  glowchat.chatmode:
+    description: Allows toggling chat mode
+    default: true
+  glowchat.color.mercury:
+    description: Mercury message color
+    default: false
+  glowchat.color.moon:
+    description: Moon message color
+    default: false
+  glowchat.color.mars:
+    description: Mars message color
+    default: false
+  glowchat.color.admin:
+    description: Admin message color
+    default: false
+  glowchat.color.gold:
+    description: Gold message color
+    default: false
+  glowchat.color.silver:
+    description: Silver message color
+    default: false
+  glowchat.color.bronze:
+    description: Bronze message color
+    default: false

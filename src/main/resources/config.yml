@@ -1,0 +1,52 @@
+chat:
+  enabled: true
+  local:
+    disable: false
+    radius: 100.0
+    format: "#AAAAAA[L] &7%displayname%&7: &f%message%"
+    noOneMessage: "&7Никто не услышал ваше сообщение"
+    showNoOneMessage: true
+    showMessageAnyway: true
+  global:
+    prefix: "!"
+    format: "#55FFFF[G] &7%displayname%&7: &f%message%"
+  modeSwitchMessage: "&7Режим чата изменен на: &f%mode%"
+  messageColors:
+    enabled: true
+    mercury: "&6"
+    moon: "&7"
+    mars: "&c"
+    admin: "&c"
+    default: "&f"
+
+joinquit:
+  enabled: true
+  disable:
+    join: false
+    quit: false
+  join: "#55FF55%player% &7зашел на сервер"
+  quit: "#FF5555%player% &7вышел с сервера"
+
+death:
+  enabled: true
+  disable:
+    public: false
+    private: false
+  public: "#AAAAAA %player% &7died"
+  private: "#AAAAAAВы умерли от &f%killer%\n#AAAAAAКоординаты: &f%x%&7, &f%y%&7, &f%z% &7(&f%world%&7)"
+
+advancement:
+  enabled: true
+  disable: false
+  message: "#FFAA00%player% &7получил достижение: &f%advancement%"
+
+autoMessages:
+  enabled: true
+  intervalSeconds: 300
+  messages:
+    - "#00FFFFhttps://t.me/vibestudiomc"
+
+messages:
+  reload: "&aКонфигурация GlowChat успешно перезагружена!"
+  no-permission: "&cУ вас нет прав на выполнение этой команды."
+  usage: "&eGlowChat &7— &f/%command% reload"
