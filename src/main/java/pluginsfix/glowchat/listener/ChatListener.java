@@ -1,13 +1,14 @@
 package pluginsfix.glowchat.listener;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import pluginsfix.glowchat.GlowChat;
+import pluginsfix.glowchat.config.GlowChatConfig;
 import pluginsfix.glowchat.util.ColorUtil;
 import pluginsfix.glowchat.util.Text;
 
@@ -20,19 +21,19 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event) {
-        FileConfiguration config = plugin.getConfig();
-        if (!config.getBoolean("chat.enabled", true)) {
+        GlowChatConfig config = plugin.getChatConfig();
+        if (!config.isChatEnabled()) {
             return;
         }
 
         event.setCancelled(true);
         Player player = event.getPlayer();
         String message = event.getMessage();
-        String globalPrefix = config.getString("chat.global.prefix", "!");
+        String globalPrefix = config.getGlobalPrefix();
 
-        boolean localDisabled = config.getBoolean("chat.local.disable", false);
+        boolean localDisabled = config.isLocalDisabled();
         boolean inGlobalMode = plugin.getGlobalChatPlayers().contains(player.getUniqueId());
-        boolean hasGlobalPrefix = message.startsWith(globalPrefix);
+        boolean hasGlobalPrefix = globalPrefix != null && !globalPrefix.isEmpty() && message.startsWith(globalPrefix);
 
         if (localDisabled || inGlobalMode || hasGlobalPrefix) {
             if (hasGlobalPrefix) {
@@ -44,8 +45,8 @@ public class ChatListener implements Listener {
         }
     }
 
-    private void sendGlobalMessage(Player player, String message, FileConfiguration config) {
-        String format = config.getString("chat.global.format", "#55FFFF[G] &7%displayname%&7: &f%message%");
+    private void sendGlobalMessage(Player player, String message, GlowChatConfig config) {
+        String format = config.getGlobalFormat();
         String color = getPlayerMessageColor(player, config);
         String formattedMessage = format
                 .replace("%player%", player.getName())
@@ -61,9 +62,9 @@ public class ChatListener implements Listener {
         Bukkit.getConsoleSender().sendMessage(finalMessage);
     }
 
-    private void sendLocalMessage(Player player, String message, FileConfiguration config) {
-        double radius = config.getDouble("chat.local.radius", 100.0);
-        String format = config.getString("chat.local.format", "#AAAAAA[L] &7%displayname%&7: &f%message%");
+    private void sendLocalMessage(Player player, String message, GlowChatConfig config) {
+        double radiusSquared = config.getLocalRadiusSquared();
+        String format = config.getLocalFormat();
         String color = getPlayerMessageColor(player, config);
         String formattedMessage = format
                 .replace("%player%", player.getName())
@@ -73,37 +74,39 @@ public class ChatListener implements Listener {
         formattedMessage = Text.setPlaceholders(player, formattedMessage);
         String finalMessage = ColorUtil.colorize(formattedMessage);
 
+        Location playerLoc = player.getLocation();
         int count = 0;
         for (Player online : Bukkit.getOnlinePlayers()) {
-            if (online.getWorld().equals(player.getWorld()) && online.getLocation().distance(player.getLocation()) <= radius) {
-                online.sendMessage(finalMessage);
-                count++;
+            if (online.getWorld().equals(player.getWorld())) {
+                if (online.getLocation().distanceSquared(playerLoc) <= radiusSquared) {
+                    online.sendMessage(finalMessage);
+                    count++;
+                }
             }
         }
         Bukkit.getConsoleSender().sendMessage(finalMessage);
 
-        if (count <= 1 && config.getBoolean("chat.local.showNoOneMessage", true)) {
-            String noOneMsg = config.getString("chat.local.noOneMessage", "&7Никто не услышал ваше сообщение");
-            Text.send(player, noOneMsg);
+        if (count <= 1 && config.isShowNoOneMessage()) {
+            Text.send(player, config.getLocalNoOneMessage());
         }
     }
 
-    private String getPlayerMessageColor(Player player, FileConfiguration config) {
-        if (!config.getBoolean("chat.messageColors.enabled", true)) {
+    private String getPlayerMessageColor(Player player, GlowChatConfig config) {
+        if (!config.isMessageColorsEnabled()) {
             return "";
         }
         if (player.hasPermission("glowchat.color.mercury") || player.hasPermission("glowchat.color.gold")) {
-            return config.getString("chat.messageColors.mercury", "&6");
+            return config.getMercuryColor();
         }
         if (player.hasPermission("glowchat.color.moon") || player.hasPermission("glowchat.color.silver")) {
-            return config.getString("chat.messageColors.moon", "&7");
+            return config.getMoonColor();
         }
         if (player.hasPermission("glowchat.color.mars") || player.hasPermission("glowchat.color.bronze")) {
-            return config.getString("chat.messageColors.mars", "&c");
+            return config.getMarsColor();
         }
         if (player.hasPermission("glowchat.color.admin")) {
-            return config.getString("chat.messageColors.admin", "&c");
+            return config.getAdminColor();
         }
-        return config.getString("chat.messageColors.default", "&f");
+        return config.getDefaultColor();
     }
 }

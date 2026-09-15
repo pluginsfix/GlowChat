@@ -8,6 +8,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import pluginsfix.glowchat.GlowChat;
+import pluginsfix.glowchat.config.GlowChatConfig;
 import pluginsfix.glowchat.util.Text;
 
 public class JoinQuitDeathListener implements Listener {
@@ -19,18 +20,19 @@ public class JoinQuitDeathListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (!plugin.getConfig().getBoolean("joinquit.enabled", true)) {
+        GlowChatConfig config = plugin.getChatConfig();
+        if (!config.isJoinEnabled()) {
             return;
         }
 
-        if (plugin.getConfig().getBoolean("joinquit.disable.join", false)) {
+        if (config.isJoinDisabled()) {
             event.setJoinMessage(null);
             return;
         }
 
         event.setJoinMessage(null);
         Player player = event.getPlayer();
-        String message = plugin.getConfig().getString("joinquit.join", "#55FF55%player% &7зашел на сервер");
+        String message = config.getJoinMessage();
         message = message.replace("%player%", player.getName());
         message = message.replace("%displayname%", player.getDisplayName());
         message = Text.setPlaceholders(player, message);
@@ -41,18 +43,20 @@ public class JoinQuitDeathListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         plugin.getGlobalChatPlayers().remove(player.getUniqueId());
+        plugin.getCooldownManager().remove(player.getUniqueId());
 
-        if (!plugin.getConfig().getBoolean("joinquit.enabled", true)) {
+        GlowChatConfig config = plugin.getChatConfig();
+        if (!config.isQuitEnabled()) {
             return;
         }
 
-        if (plugin.getConfig().getBoolean("joinquit.disable.quit", false)) {
+        if (config.isQuitDisabled()) {
             event.setQuitMessage(null);
             return;
         }
 
         event.setQuitMessage(null);
-        String message = plugin.getConfig().getString("joinquit.quit", "#FF5555%player% &7вышел с сервера");
+        String message = config.getQuitMessage();
         message = message.replace("%player%", player.getName());
         message = message.replace("%displayname%", player.getDisplayName());
         message = Text.setPlaceholders(player, message);
@@ -61,7 +65,8 @@ public class JoinQuitDeathListener implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        if (!plugin.getConfig().getBoolean("death.enabled", true)) {
+        GlowChatConfig config = plugin.getChatConfig();
+        if (!config.isDeathEnabled()) {
             return;
         }
 
@@ -70,8 +75,8 @@ public class JoinQuitDeathListener implements Listener {
         Player killer = player.getKiller();
         String killerName = killer != null ? killer.getName() : "Unknown";
 
-        if (!plugin.getConfig().getBoolean("death.disable.public", false)) {
-            String publicMsg = plugin.getConfig().getString("death.public", "#AAAAAA %player% &7died");
+        if (!config.isDeathPublicDisabled()) {
+            String publicMsg = config.getDeathPublicMessage();
             publicMsg = publicMsg.replace("%player%", player.getName());
             publicMsg = publicMsg.replace("%displayname%", player.getDisplayName());
             publicMsg = publicMsg.replace("%killer%", killerName);
@@ -79,8 +84,8 @@ public class JoinQuitDeathListener implements Listener {
             Text.broadcast(publicMsg);
         }
 
-        if (!plugin.getConfig().getBoolean("death.disable.private", false)) {
-            String privateMsg = plugin.getConfig().getString("death.private", "#AAAAAAВы умерли от &f%killer%\n#AAAAAAКоординаты: &f%x%&7, &f%y%&7, &f%z% &7(&f%world%&7)");
+        if (!config.isDeathPrivateDisabled()) {
+            String privateMsg = config.getDeathPrivateMessage();
             Location loc = player.getLocation();
             privateMsg = privateMsg.replace("%player%", player.getName());
             privateMsg = privateMsg.replace("%displayname%", player.getDisplayName());

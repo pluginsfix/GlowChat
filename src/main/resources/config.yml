@@ -46,7 +46,11 @@ autoMessages:
   messages:
     - "#00FFFFhttps://t.me/vibestudiomc"
 
+commands:
+  cooldown-milliseconds: 1000
+
 messages:
   reload: "&aКонфигурация GlowChat успешно перезагружена!"
   no-permission: "&cУ вас нет прав на выполнение этой команды."
   usage: "&eGlowChat &7— &f/%command% reload"
+  cooldown: "&cПожалуйста, подождите перед следующим использованием команды."

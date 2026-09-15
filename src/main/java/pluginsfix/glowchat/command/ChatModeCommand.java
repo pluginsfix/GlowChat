@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import pluginsfix.glowchat.GlowChat;
+import pluginsfix.glowchat.config.GlowChatConfig;
 import pluginsfix.glowchat.util.Text;
 
 public class ChatModeCommand implements CommandExecutor, TabCompleter {
@@ -25,9 +26,15 @@ public class ChatModeCommand implements CommandExecutor, TabCompleter {
         }
 
         Player player = (Player) sender;
+        GlowChatConfig config = plugin.getChatConfig();
+
+        if (plugin.getCooldownManager().isOnCooldown(player.getUniqueId(), config.getCommandCooldownMillis())) {
+            Text.send(player, config.getCooldownMessage());
+            return true;
+        }
+
         if (!player.hasPermission("glowchat.chatmode")) {
-            String noPermMsg = plugin.getConfig().getString("messages.no-permission", "&cУ вас нет прав на выполнение этой команды.");
-            Text.send(player, noPermMsg);
+            Text.send(player, config.getNoPermissionMessage());
             return true;
         }
 
@@ -41,8 +48,7 @@ public class ChatModeCommand implements CommandExecutor, TabCompleter {
         }
 
         String modeName = isGlobal ? "Глобальный" : "Локальный";
-        String modeSwitchMsg = plugin.getConfig().getString("chat.modeSwitchMessage", "&7Режим чата изменен на: &f%mode%");
-        modeSwitchMsg = modeSwitchMsg.replace("%mode%", modeName);
+        String modeSwitchMsg = config.getModeSwitchMessage().replace("%mode%", modeName);
         Text.send(player, modeSwitchMsg);
 
         return true;

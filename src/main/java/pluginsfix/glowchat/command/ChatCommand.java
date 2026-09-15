@@ -7,7 +7,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import pluginsfix.glowchat.GlowChat;
+import pluginsfix.glowchat.config.GlowChatConfig;
 import pluginsfix.glowchat.util.Text;
 
 public class ChatCommand implements CommandExecutor, TabCompleter {
@@ -19,35 +21,42 @@ public class ChatCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        GlowChatConfig config = plugin.getChatConfig();
+
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            if (plugin.getCooldownManager().isOnCooldown(player.getUniqueId(), config.getCommandCooldownMillis())) {
+                Text.send(player, config.getCooldownMessage());
+                return true;
+            }
+        }
+
         if (args.length == 0) {
-            String usageMsg = plugin.getConfig().getString("messages.usage", "&eGlowChat &7— &f/%command% reload");
-            usageMsg = usageMsg.replace("%command%", label);
+            String usageMsg = config.getUsageMessage().replace("%command%", label);
             Text.send(sender, usageMsg);
             return true;
         }
 
         if (args[0].equalsIgnoreCase("reload")) {
             if (!sender.hasPermission("glowchat.reload")) {
-                String noPermMsg = plugin.getConfig().getString("messages.no-permission", "&cУ вас нет прав на выполнение этой команды.");
-                Text.send(sender, noPermMsg);
+                Text.send(sender, config.getNoPermissionMessage());
                 return true;
             }
 
             plugin.reloadPlugin();
-            String reloadMsg = plugin.getConfig().getString("messages.reload", "&aКонфигурация GlowChat успешно перезагружена!");
-            Text.send(sender, reloadMsg);
+            GlowChatConfig updatedConfig = plugin.getChatConfig();
+            Text.send(sender, updatedConfig.getReloadMessage());
             return true;
         }
 
-        String usageMsg = plugin.getConfig().getString("messages.usage", "&eGlowChat &7— &f/%command% reload");
-        usageMsg = usageMsg.replace("%command%", label);
+        String usageMsg = config.getUsageMessage().replace("%command%", label);
         Text.send(sender, usageMsg);
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 1) {
+        if (args.length == 1 && sender.hasPermission("glowchat.reload")) {
             List<String> completions = new ArrayList<>();
             if ("reload".startsWith(args[0].toLowerCase())) {
                 completions.add("reload");

@@ -9,20 +9,25 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import pluginsfix.glowchat.command.ChatCommand;
 import pluginsfix.glowchat.command.ChatModeCommand;
+import pluginsfix.glowchat.config.GlowChatConfig;
 import pluginsfix.glowchat.listener.AdvancementListener;
 import pluginsfix.glowchat.listener.ChatListener;
 import pluginsfix.glowchat.listener.JoinQuitDeathListener;
 import pluginsfix.glowchat.task.AutoMessageTask;
+import pluginsfix.glowchat.util.CooldownManager;
 
 public final class GlowChat extends JavaPlugin {
     private static GlowChat instance;
     private final Set<UUID> globalChatPlayers = new HashSet<>();
+    private final CooldownManager cooldownManager = new CooldownManager();
+    private volatile GlowChatConfig chatConfig;
     private BukkitTask autoMessageTask;
 
     @Override
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
+        loadConfiguration();
 
         registerListeners();
         registerCommands();
@@ -32,14 +37,20 @@ public final class GlowChat extends JavaPlugin {
     @Override
     public void onDisable() {
         stopAutoMessages();
+        cooldownManager.clear();
         globalChatPlayers.clear();
         instance = null;
     }
 
     public void reloadPlugin() {
         reloadConfig();
+        loadConfiguration();
         stopAutoMessages();
         startAutoMessages();
+    }
+
+    private void loadConfiguration() {
+        this.chatConfig = new GlowChatConfig(getConfig());
     }
 
     private void registerListeners() {
@@ -66,15 +77,11 @@ public final class GlowChat extends JavaPlugin {
     }
 
     private void startAutoMessages() {
-        if (!getConfig().getBoolean("autoMessages.enabled", true)) {
+        if (!chatConfig.isAutoMessagesEnabled()) {
             return;
         }
 
-        long intervalTicks = getConfig().getLong("autoMessages.intervalSeconds", 300L) * 20L;
-        if (intervalTicks <= 0) {
-            intervalTicks = 6000L;
-        }
-
+        long intervalTicks = chatConfig.getAutoMessagesIntervalTicks();
         AutoMessageTask task = new AutoMessageTask(this);
         autoMessageTask = task.runTaskTimer(this, intervalTicks, intervalTicks);
     }
@@ -90,7 +97,15 @@ public final class GlowChat extends JavaPlugin {
         return instance;
     }
 
+    public GlowChatConfig getChatConfig() {
+        return chatConfig;
+    }
+
     public Set<UUID> getGlobalChatPlayers() {
         return globalChatPlayers;
+    }
+
+    public CooldownManager getCooldownManager() {
+        return cooldownManager;
     }
 }

@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import pluginsfix.glowchat.GlowChat;
+import pluginsfix.glowchat.config.GlowChatConfig;
 import pluginsfix.glowchat.util.Text;
 
 public class AdvancementListener implements Listener {
@@ -18,10 +19,11 @@ public class AdvancementListener implements Listener {
 
     @EventHandler
     public void onAdvancement(PlayerAdvancementDoneEvent event) {
-        if (!plugin.getConfig().getBoolean("advancement.enabled", true)) {
+        GlowChatConfig config = plugin.getChatConfig();
+        if (!config.isAdvancementEnabled()) {
             return;
         }
-        if (plugin.getConfig().getBoolean("advancement.disable", false)) {
+        if (config.isAdvancementDisabled()) {
             return;
         }
 
@@ -38,7 +40,7 @@ public class AdvancementListener implements Listener {
         }
         title = title.replace('_', ' ');
 
-        String format = plugin.getConfig().getString("advancement.message", "#FFAA00%player% &7получил достижение: &f%advancement%");
+        String format = config.getAdvancementMessage();
         format = format.replace("%player%", player.getName());
         format = format.replace("%displayname%", player.getDisplayName());
         format = format.replace("%advancement%", title);
