@@ -9,6 +9,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import pluginsfix.glowchat.GlowChat;
 import pluginsfix.glowchat.config.GlowChatConfig;
+import pluginsfix.glowchat.config.GlowChatMessages;
 import pluginsfix.glowchat.util.Text;
 
 public class ChatModeCommand implements CommandExecutor, TabCompleter {
@@ -21,20 +22,20 @@ public class ChatModeCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Only players can execute this command.");
             return true;
         }
 
         Player player = (Player) sender;
         GlowChatConfig config = plugin.getChatConfig();
+        GlowChatMessages messages = plugin.getChatMessages();
 
         if (plugin.getCooldownManager().isOnCooldown(player.getUniqueId(), config.getCommandCooldownMillis())) {
-            Text.send(player, config.getCooldownMessage());
+            Text.send(player, messages.getCooldown());
             return true;
         }
 
         if (!player.hasPermission("glowchat.chatmode")) {
-            Text.send(player, config.getNoPermissionMessage());
+            Text.send(player, messages.getNoPermission());
             return true;
         }
 
@@ -47,9 +48,8 @@ public class ChatModeCommand implements CommandExecutor, TabCompleter {
             isGlobal = true;
         }
 
-        String modeName = isGlobal ? "Глобальный" : "Локальный";
-        String modeSwitchMsg = config.getModeSwitchMessage().replace("%mode%", modeName);
-        Text.send(player, modeSwitchMsg);
+        String modeMessage = isGlobal ? messages.getChatModeGlobal() : messages.getChatModeLocal();
+        Text.send(player, modeMessage);
 
         return true;
     }

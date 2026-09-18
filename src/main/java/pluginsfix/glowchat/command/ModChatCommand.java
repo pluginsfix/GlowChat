@@ -10,6 +10,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import pluginsfix.glowchat.GlowChat;
 import pluginsfix.glowchat.config.GlowChatConfig;
+import pluginsfix.glowchat.config.GlowChatMessages;
 import pluginsfix.glowchat.util.ColorUtil;
 import pluginsfix.glowchat.util.Text;
 
@@ -23,22 +24,23 @@ public class ModChatCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         GlowChatConfig config = plugin.getChatConfig();
+        GlowChatMessages messages = plugin.getChatMessages();
 
         if (!sender.hasPermission("glowchat.modchat")) {
-            Text.send(sender, config.getNoPermissionMessage());
+            Text.send(sender, messages.getNoPermission());
             return true;
         }
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (plugin.getCooldownManager().isOnCooldown(player.getUniqueId(), config.getCommandCooldownMillis())) {
-                Text.send(player, config.getCooldownMessage());
+                Text.send(player, messages.getCooldown());
                 return true;
             }
         }
 
         if (args.length == 0) {
-            String usageMsg = config.getModChatUsage().replace("%command%", label);
+            String usageMsg = messages.getModChatUsage().replace("%command%", label);
             Text.send(sender, usageMsg);
             return true;
         }

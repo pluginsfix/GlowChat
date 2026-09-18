@@ -23,7 +23,7 @@ public class AdvancementListener implements Listener {
         if (!config.isAdvancementEnabled()) {
             return;
         }
-        if (config.isAdvancementDisabled()) {
+        if (config.isDisableAdvancement()) {
             return;
         }
 
@@ -40,7 +40,7 @@ public class AdvancementListener implements Listener {
         }
         title = title.replace('_', ' ');
 
-        String format = config.getAdvancementMessage();
+        String format = config.getAdvancementFormat();
         format = format.replace("%player%", player.getName());
         format = format.replace("%displayname%", player.getDisplayName());
         format = format.replace("%advancement%", title);

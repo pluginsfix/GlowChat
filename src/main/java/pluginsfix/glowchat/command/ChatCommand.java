@@ -10,6 +10,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import pluginsfix.glowchat.GlowChat;
 import pluginsfix.glowchat.config.GlowChatConfig;
+import pluginsfix.glowchat.config.GlowChatMessages;
 import pluginsfix.glowchat.util.Text;
 
 public class ChatCommand implements CommandExecutor, TabCompleter {
@@ -22,34 +23,35 @@ public class ChatCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         GlowChatConfig config = plugin.getChatConfig();
+        GlowChatMessages messages = plugin.getChatMessages();
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (plugin.getCooldownManager().isOnCooldown(player.getUniqueId(), config.getCommandCooldownMillis())) {
-                Text.send(player, config.getCooldownMessage());
+                Text.send(player, messages.getCooldown());
                 return true;
             }
         }
 
         if (args.length == 0) {
-            String usageMsg = config.getUsageMessage().replace("%command%", label);
+            String usageMsg = messages.getUsage().replace("%command%", label);
             Text.send(sender, usageMsg);
             return true;
         }
 
         if (args[0].equalsIgnoreCase("reload")) {
             if (!sender.hasPermission("glowchat.reload")) {
-                Text.send(sender, config.getNoPermissionMessage());
+                Text.send(sender, messages.getNoPermission());
                 return true;
             }
 
             plugin.reloadPlugin();
-            GlowChatConfig updatedConfig = plugin.getChatConfig();
-            Text.send(sender, updatedConfig.getReloadMessage());
+            GlowChatMessages updatedMessages = plugin.getChatMessages();
+            Text.send(sender, updatedMessages.getReload());
             return true;
         }
 
-        String usageMsg = config.getUsageMessage().replace("%command%", label);
+        String usageMsg = messages.getUsage().replace("%command%", label);
         Text.send(sender, usageMsg);
         return true;
     }

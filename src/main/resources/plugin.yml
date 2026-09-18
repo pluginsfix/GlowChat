@@ -1,11 +1,12 @@
 name: GlowChat
 version: '${project.version}'
 main: pluginsfix.glowchat.GlowChat
-api-version: '1.16'
+api-version: '1.21'
 prefix: GlowChat
 authors: [pluginsfix, talixty]
 description: Simple, optimized and functional chat plugin with MiniMessage support
 website: https://t.me/vibestudiomc
+softdepend: [PlaceholderAPI]
 
 commands:
   chat:
@@ -13,35 +14,30 @@ commands:
     aliases:
       - glowchat
       - gc
-    usage: /<command> [reload]
   chatmode:
     description: Toggle chat mode between global and local
     permission: glowchat.chatmode
     aliases:
       - mode
       - cm
-    usage: /<command>
   ac:
     description: Send message to Admin Chat
     permission: glowchat.adminchat
     aliases:
       - adminchat
       - a
-    usage: /<command> <message>
   mc:
     description: Send message to Mod Chat
     permission: glowchat.modchat
     aliases:
       - modchat
       - m
-    usage: /<command> <message>
   dc:
     description: Send message to Donor Chat
     permission: glowchat.donorchat
     aliases:
       - donorchat
       - d
-    usage: /<command> <message>
 
 permissions:
   glowchat.reload:

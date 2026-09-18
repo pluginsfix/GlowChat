@@ -10,13 +10,11 @@ public final class GlowChatConfig {
     private final double localRadius;
     private final double localRadiusSquared;
     private final String localFormat;
-    private final String localNoOneMessage;
     private final boolean showNoOneMessage;
     private final boolean showMessageAnyway;
 
     private final String globalPrefix;
     private final String globalFormat;
-    private final String modeSwitchMessage;
 
     private final boolean messageColorsEnabled;
     private final String mercuryColor;
@@ -28,111 +26,91 @@ public final class GlowChatConfig {
     private final boolean adminChatEnabled;
     private final String adminChatPrefix;
     private final String adminChatFormat;
-    private final String adminChatUsage;
 
     private final boolean modChatEnabled;
     private final String modChatPrefix;
     private final String modChatFormat;
-    private final String modChatUsage;
 
     private final boolean donorChatEnabled;
     private final String donorChatPrefix;
     private final String donorChatFormat;
-    private final String donorChatUsage;
 
     private final boolean joinEnabled;
-    private final boolean joinDisabled;
-    private final String joinMessage;
-
-    private final boolean quitEnabled;
-    private final boolean quitDisabled;
-    private final String quitMessage;
+    private final boolean disableJoin;
+    private final boolean disableQuit;
+    private final String joinFormat;
+    private final String quitFormat;
 
     private final boolean deathEnabled;
-    private final boolean deathPublicDisabled;
-    private final boolean deathPrivateDisabled;
-    private final String deathPublicMessage;
-    private final String deathPrivateMessage;
+    private final boolean disableDeathPublic;
+    private final boolean disableDeathPrivate;
+    private final String deathPublicFormat;
+    private final String deathPrivateFormat;
 
     private final boolean advancementEnabled;
-    private final boolean advancementDisabled;
-    private final String advancementMessage;
+    private final boolean disableAdvancement;
+    private final String advancementFormat;
 
     private final boolean autoMessagesEnabled;
     private final long autoMessagesIntervalTicks;
     private final List<String> autoMessages;
 
-    private final String reloadMessage;
-    private final String noPermissionMessage;
-    private final String usageMessage;
-    private final String cooldownMessage;
     private final long commandCooldownMillis;
 
     public GlowChatConfig(FileConfiguration config) {
-        this.chatEnabled = config.getBoolean("chat.enabled", true);
-        this.localDisabled = config.getBoolean("chat.local.disable", false);
-        this.localRadius = config.getDouble("chat.local.radius", 100.0);
+        this.chatEnabled = config.getBoolean("chat.enabled");
+        this.localDisabled = config.getBoolean("chat.local.disable");
+        this.localRadius = config.getDouble("chat.local.radius");
         this.localRadiusSquared = this.localRadius * this.localRadius;
-        this.localFormat = config.getString("chat.local.format", "<gray>[L] %displayname%: <white>%message%");
-        this.localNoOneMessage = config.getString("chat.local.noOneMessage", "<gray>Никто не услышал ваше сообщение");
-        this.showNoOneMessage = config.getBoolean("chat.local.showNoOneMessage", true);
-        this.showMessageAnyway = config.getBoolean("chat.local.showMessageAnyway", true);
+        this.localFormat = config.getString("chat.local.format");
+        this.showNoOneMessage = config.getBoolean("chat.local.show-no-one-message");
+        this.showMessageAnyway = config.getBoolean("chat.local.show-message-anyway");
 
-        this.globalPrefix = config.getString("chat.global.prefix", "!");
-        this.globalFormat = config.getString("chat.global.format", "<aqua>[G] <gray>%displayname%: <white>%message%");
-        this.modeSwitchMessage = config.getString("chat.modeSwitchMessage", "<gray>Режим чата изменен на: <white>%mode%");
+        this.globalPrefix = config.getString("chat.global.prefix");
+        this.globalFormat = config.getString("chat.global.format");
 
-        this.messageColorsEnabled = config.getBoolean("chat.messageColors.enabled", true);
-        this.mercuryColor = config.getString("chat.messageColors.mercury", "<gold>");
-        this.moonColor = config.getString("chat.messageColors.moon", "<gray>");
-        this.marsColor = config.getString("chat.messageColors.mars", "<red>");
-        this.adminColor = config.getString("chat.messageColors.admin", "<red>");
-        this.defaultColor = config.getString("chat.messageColors.default", "<white>");
+        this.messageColorsEnabled = config.getBoolean("chat.message-colors.enabled");
+        this.mercuryColor = config.getString("chat.message-colors.mercury");
+        this.moonColor = config.getString("chat.message-colors.moon");
+        this.marsColor = config.getString("chat.message-colors.mars");
+        this.adminColor = config.getString("chat.message-colors.admin");
+        this.defaultColor = config.getString("chat.message-colors.default");
 
-        this.adminChatEnabled = config.getBoolean("admin-chat.enabled", true);
-        this.adminChatPrefix = config.getString("admin-chat.prefix-symbol", "@");
-        this.adminChatFormat = config.getString("admin-chat.format", "<red>[AdminChat] <gray>%displayname%: <white>%message%");
-        this.adminChatUsage = config.getString("admin-chat.usage", "<yellow>Использование: <white>/%command% <сообщение>");
+        this.adminChatEnabled = config.getBoolean("admin-chat.enabled");
+        this.adminChatPrefix = config.getString("admin-chat.prefix-symbol");
+        this.adminChatFormat = config.getString("admin-chat.format");
 
-        this.modChatEnabled = config.getBoolean("mod-chat.enabled", true);
-        this.modChatPrefix = config.getString("mod-chat.prefix-symbol", "?");
-        this.modChatFormat = config.getString("mod-chat.format", "<blue>[ModChat] <gray>%displayname%: <white>%message%");
-        this.modChatUsage = config.getString("mod-chat.usage", "<yellow>Использование: <white>/%command% <сообщение>");
+        this.modChatEnabled = config.getBoolean("mod-chat.enabled");
+        this.modChatPrefix = config.getString("mod-chat.prefix-symbol");
+        this.modChatFormat = config.getString("mod-chat.format");
 
-        this.donorChatEnabled = config.getBoolean("donor-chat.enabled", true);
-        this.donorChatPrefix = config.getString("donor-chat.prefix-symbol", "$");
-        this.donorChatFormat = config.getString("donor-chat.format", "<gold>[DonorChat] <gray>%displayname%: <white>%message%");
-        this.donorChatUsage = config.getString("donor-chat.usage", "<yellow>Использование: <white>/%command% <сообщение>");
+        this.donorChatEnabled = config.getBoolean("donor-chat.enabled");
+        this.donorChatPrefix = config.getString("donor-chat.prefix-symbol");
+        this.donorChatFormat = config.getString("donor-chat.format");
 
-        this.joinEnabled = config.getBoolean("joinquit.enabled", true);
-        this.joinDisabled = config.getBoolean("joinquit.disable.join", false);
-        this.joinMessage = config.getString("joinquit.join", "<green>%player% <gray>зашел на сервер");
+        this.joinEnabled = config.getBoolean("join-quit.enabled");
+        this.disableJoin = config.getBoolean("join-quit.disable-join");
+        this.disableQuit = config.getBoolean("join-quit.disable-quit");
+        this.joinFormat = config.getString("join-quit.join-format");
+        this.quitFormat = config.getString("join-quit.quit-format");
 
-        this.quitEnabled = config.getBoolean("joinquit.enabled", true);
-        this.quitDisabled = config.getBoolean("joinquit.disable.quit", false);
-        this.quitMessage = config.getString("joinquit.quit", "<red>%player% <gray>вышел с сервера");
+        this.deathEnabled = config.getBoolean("death.enabled");
+        this.disableDeathPublic = config.getBoolean("death.disable-public");
+        this.disableDeathPrivate = config.getBoolean("death.disable-private");
+        this.deathPublicFormat = config.getString("death.public-format");
+        this.deathPrivateFormat = config.getString("death.private-format");
 
-        this.deathEnabled = config.getBoolean("death.enabled", true);
-        this.deathPublicDisabled = config.getBoolean("death.disable.public", false);
-        this.deathPrivateDisabled = config.getBoolean("death.disable.private", false);
-        this.deathPublicMessage = config.getString("death.public", "<gray>%player% died");
-        this.deathPrivateMessage = config.getString("death.private", "<gray>Вы умерли от <white>%killer%\n<gray>Координаты: <white>%x%<gray>, <white>%y%<gray>, <white>%z% <gray>(<white>%world%<gray>)");
+        this.advancementEnabled = config.getBoolean("advancement.enabled");
+        this.disableAdvancement = config.getBoolean("advancement.disable");
+        this.advancementFormat = config.getString("advancement.format");
 
-        this.advancementEnabled = config.getBoolean("advancement.enabled", true);
-        this.advancementDisabled = config.getBoolean("advancement.disable", false);
-        this.advancementMessage = config.getString("advancement.message", "<gold>%player% <gray>получил достижение: <white>%advancement%");
-
-        this.autoMessagesEnabled = config.getBoolean("autoMessages.enabled", true);
-        long intervalSec = config.getLong("autoMessages.intervalSeconds", 300L);
+        this.autoMessagesEnabled = config.getBoolean("auto-messages.enabled");
+        long intervalSec = config.getLong("auto-messages.interval-seconds");
         this.autoMessagesIntervalTicks = (intervalSec > 0 ? intervalSec : 300L) * 20L;
-        List<String> rawMessages = config.getStringList("autoMessages.messages");
+        List<String> rawMessages = config.getStringList("auto-messages.messages");
         this.autoMessages = rawMessages != null ? Collections.unmodifiableList(rawMessages) : Collections.emptyList();
 
-        this.reloadMessage = config.getString("messages.reload", "<green>Конфигурация GlowChat успешно перезагружена!");
-        this.noPermissionMessage = config.getString("messages.no-permission", "<red>У вас нет прав на выполнение этой команды.");
-        this.usageMessage = config.getString("messages.usage", "<yellow>GlowChat <gray>— <white>/%command% reload");
-        this.cooldownMessage = config.getString("messages.cooldown", "<red>Пожалуйста, не спамьте командами!");
-        this.commandCooldownMillis = config.getLong("commands.cooldown-milliseconds", 1000L);
+        this.commandCooldownMillis = config.getLong("commands.cooldown-milliseconds");
     }
 
     public boolean isChatEnabled() {
@@ -151,10 +129,6 @@ public final class GlowChatConfig {
         return localFormat;
     }
 
-    public String getLocalNoOneMessage() {
-        return localNoOneMessage;
-    }
-
     public boolean isShowNoOneMessage() {
         return showNoOneMessage;
     }
@@ -169,10 +143,6 @@ public final class GlowChatConfig {
 
     public String getGlobalFormat() {
         return globalFormat;
-    }
-
-    public String getModeSwitchMessage() {
-        return modeSwitchMessage;
     }
 
     public boolean isMessageColorsEnabled() {
@@ -211,10 +181,6 @@ public final class GlowChatConfig {
         return adminChatFormat;
     }
 
-    public String getAdminChatUsage() {
-        return adminChatUsage;
-    }
-
     public boolean isModChatEnabled() {
         return modChatEnabled;
     }
@@ -225,10 +191,6 @@ public final class GlowChatConfig {
 
     public String getModChatFormat() {
         return modChatFormat;
-    }
-
-    public String getModChatUsage() {
-        return modChatUsage;
     }
 
     public boolean isDonorChatEnabled() {
@@ -243,64 +205,56 @@ public final class GlowChatConfig {
         return donorChatFormat;
     }
 
-    public String getDonorChatUsage() {
-        return donorChatUsage;
-    }
-
     public boolean isJoinEnabled() {
         return joinEnabled;
     }
 
-    public boolean isJoinDisabled() {
-        return joinDisabled;
+    public boolean isDisableJoin() {
+        return disableJoin;
     }
 
-    public String getJoinMessage() {
-        return joinMessage;
+    public boolean isDisableQuit() {
+        return disableQuit;
     }
 
-    public boolean isQuitEnabled() {
-        return quitEnabled;
+    public String getJoinFormat() {
+        return joinFormat;
     }
 
-    public boolean isQuitDisabled() {
-        return quitDisabled;
-    }
-
-    public String getQuitMessage() {
-        return quitMessage;
+    public String getQuitFormat() {
+        return quitFormat;
     }
 
     public boolean isDeathEnabled() {
         return deathEnabled;
     }
 
-    public boolean isDeathPublicDisabled() {
-        return deathPublicDisabled;
+    public boolean isDisableDeathPublic() {
+        return disableDeathPublic;
     }
 
-    public boolean isDeathPrivateDisabled() {
-        return deathPrivateDisabled;
+    public boolean isDisableDeathPrivate() {
+        return disableDeathPrivate;
     }
 
-    public String getDeathPublicMessage() {
-        return deathPublicMessage;
+    public String getDeathPublicFormat() {
+        return deathPublicFormat;
     }
 
-    public String getDeathPrivateMessage() {
-        return deathPrivateMessage;
+    public String getDeathPrivateFormat() {
+        return deathPrivateFormat;
     }
 
     public boolean isAdvancementEnabled() {
         return advancementEnabled;
     }
 
-    public boolean isAdvancementDisabled() {
-        return advancementDisabled;
+    public boolean isDisableAdvancement() {
+        return disableAdvancement;
     }
 
-    public String getAdvancementMessage() {
-        return advancementMessage;
+    public String getAdvancementFormat() {
+        return advancementFormat;
     }
 
     public boolean isAutoMessagesEnabled() {
@@ -313,22 +267,6 @@ public final class GlowChatConfig {
 
     public List<String> getAutoMessages() {
         return autoMessages;
-    }
-
-    public String getReloadMessage() {
-        return reloadMessage;
-    }
-
-    public String getNoPermissionMessage() {
-        return noPermissionMessage;
-    }
-
-    public String getUsageMessage() {
-        return usageMessage;
-    }
-
-    public String getCooldownMessage() {
-        return cooldownMessage;
     }
 
     public long getCommandCooldownMillis() {

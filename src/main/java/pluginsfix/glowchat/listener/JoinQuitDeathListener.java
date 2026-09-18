@@ -25,14 +25,14 @@ public class JoinQuitDeathListener implements Listener {
             return;
         }
 
-        if (config.isJoinDisabled()) {
+        if (config.isDisableJoin()) {
             event.setJoinMessage(null);
             return;
         }
 
         event.setJoinMessage(null);
         Player player = event.getPlayer();
-        String message = config.getJoinMessage();
+        String message = config.getJoinFormat();
         message = message.replace("%player%", player.getName());
         message = message.replace("%displayname%", player.getDisplayName());
         message = Text.setPlaceholders(player, message);
@@ -50,13 +50,13 @@ public class JoinQuitDeathListener implements Listener {
             return;
         }
 
-        if (config.isQuitDisabled()) {
+        if (config.isDisableQuit()) {
             event.setQuitMessage(null);
             return;
         }
 
         event.setQuitMessage(null);
-        String message = config.getQuitMessage();
+        String message = config.getQuitFormat();
         message = message.replace("%player%", player.getName());
         message = message.replace("%displayname%", player.getDisplayName());
         message = Text.setPlaceholders(player, message);
@@ -73,10 +73,10 @@ public class JoinQuitDeathListener implements Listener {
         event.setDeathMessage(null);
         Player player = event.getEntity();
         Player killer = player.getKiller();
-        String killerName = killer != null ? killer.getName() : "Unknown";
+        String killerName = killer != null ? killer.getName() : "";
 
-        if (!config.isDeathPublicDisabled()) {
-            String publicMsg = config.getDeathPublicMessage();
+        if (!config.isDisableDeathPublic()) {
+            String publicMsg = config.getDeathPublicFormat();
             publicMsg = publicMsg.replace("%player%", player.getName());
             publicMsg = publicMsg.replace("%displayname%", player.getDisplayName());
             publicMsg = publicMsg.replace("%killer%", killerName);
@@ -84,8 +84,8 @@ public class JoinQuitDeathListener implements Listener {
             Text.broadcast(publicMsg);
         }
 
-        if (!config.isDeathPrivateDisabled()) {
-            String privateMsg = config.getDeathPrivateMessage();
+        if (!config.isDisableDeathPrivate()) {
+            String privateMsg = config.getDeathPrivateFormat();
             Location loc = player.getLocation();
             privateMsg = privateMsg.replace("%player%", player.getName());
             privateMsg = privateMsg.replace("%displayname%", player.getDisplayName());

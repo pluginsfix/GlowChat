@@ -1,9 +1,9 @@
 package pluginsfix.glowchat.util;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import pluginsfix.glowchat.hook.PlaceholderHook;
 
 public final class Text {
 
@@ -27,12 +27,6 @@ public final class Text {
     }
 
     public static String setPlaceholders(Player player, String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            return PlaceholderAPI.setPlaceholders(player, text);
-        }
-        return text;
+        return PlaceholderHook.setPlaceholders(player, text);
     }
 }

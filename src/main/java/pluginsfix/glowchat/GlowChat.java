@@ -1,9 +1,11 @@
 package pluginsfix.glowchat;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -13,6 +15,7 @@ import pluginsfix.glowchat.command.ChatModeCommand;
 import pluginsfix.glowchat.command.DonorChatCommand;
 import pluginsfix.glowchat.command.ModChatCommand;
 import pluginsfix.glowchat.config.GlowChatConfig;
+import pluginsfix.glowchat.config.GlowChatMessages;
 import pluginsfix.glowchat.listener.AdvancementListener;
 import pluginsfix.glowchat.listener.ChatListener;
 import pluginsfix.glowchat.listener.JoinQuitDeathListener;
@@ -24,12 +27,14 @@ public final class GlowChat extends JavaPlugin {
     private final Set<UUID> globalChatPlayers = new HashSet<>();
     private final CooldownManager cooldownManager = new CooldownManager();
     private volatile GlowChatConfig chatConfig;
+    private volatile GlowChatMessages chatMessages;
     private BukkitTask autoMessageTask;
 
     @Override
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
+        saveResource("messages.yml", false);
         loadConfiguration();
 
         registerListeners();
@@ -54,6 +59,12 @@ public final class GlowChat extends JavaPlugin {
 
     private void loadConfiguration() {
         this.chatConfig = new GlowChatConfig(getConfig());
+        File messagesFile = new File(getDataFolder(), "messages.yml");
+        if (!messagesFile.exists()) {
+            saveResource("messages.yml", false);
+        }
+        YamlConfiguration messagesYaml = YamlConfiguration.loadConfiguration(messagesFile);
+        this.chatMessages = new GlowChatMessages(messagesYaml);
     }
 
     private void registerListeners() {
@@ -123,6 +134,10 @@ public final class GlowChat extends JavaPlugin {
 
     public GlowChatConfig getChatConfig() {
         return chatConfig;
+    }
+
+    public GlowChatMessages getChatMessages() {
+        return chatMessages;
     }
 
     public Set<UUID> getGlobalChatPlayers() {

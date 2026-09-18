@@ -12,6 +12,7 @@ import pluginsfix.glowchat.command.AdminChatCommand;
 import pluginsfix.glowchat.command.DonorChatCommand;
 import pluginsfix.glowchat.command.ModChatCommand;
 import pluginsfix.glowchat.config.GlowChatConfig;
+import pluginsfix.glowchat.config.GlowChatMessages;
 import pluginsfix.glowchat.util.ColorUtil;
 import pluginsfix.glowchat.util.Text;
 
@@ -25,6 +26,7 @@ public class ChatListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event) {
         GlowChatConfig config = plugin.getChatConfig();
+        GlowChatMessages messages = plugin.getChatMessages();
         if (!config.isChatEnabled()) {
             return;
         }
@@ -84,7 +86,7 @@ public class ChatListener implements Listener {
             }
             sendGlobalMessage(player, message, config);
         } else {
-            sendLocalMessage(player, message, config);
+            sendLocalMessage(player, message, config, messages);
         }
     }
 
@@ -105,7 +107,7 @@ public class ChatListener implements Listener {
         Bukkit.getConsoleSender().sendMessage(finalMessage);
     }
 
-    private void sendLocalMessage(Player player, String message, GlowChatConfig config) {
+    private void sendLocalMessage(Player player, String message, GlowChatConfig config, GlowChatMessages messages) {
         double radiusSquared = config.getLocalRadiusSquared();
         String format = config.getLocalFormat();
         String color = getPlayerMessageColor(player, config);
@@ -130,7 +132,7 @@ public class ChatListener implements Listener {
         Bukkit.getConsoleSender().sendMessage(finalMessage);
 
         if (count <= 1 && config.isShowNoOneMessage()) {
-            Text.send(player, config.getLocalNoOneMessage());
+            Text.send(player, messages.getNoOneHeard());
         }
     }
 

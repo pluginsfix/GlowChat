@@ -4,14 +4,12 @@ chat:
     disable: false
     radius: 100.0
     format: "<gray>[L] %displayname%: <white>%message%"
-    noOneMessage: "<gray>Никто не услышал ваше сообщение"
-    showNoOneMessage: true
-    showMessageAnyway: true
+    show-no-one-message: true
+    show-message-anyway: true
   global:
     prefix: "!"
     format: "<aqua>[G] <gray>%displayname%: <white>%message%"
-  modeSwitchMessage: "<gray>Режим чата изменен на: <white>%mode%"
-  messageColors:
+  message-colors:
     enabled: true
     mercury: "<gold>"
     moon: "<gray>"
@@ -23,52 +21,41 @@ admin-chat:
   enabled: true
   prefix-symbol: "@"
   format: "<red>[AdminChat] <gray>%displayname%: <white>%message%"
-  usage: "<yellow>Использование: <white>/%command% <сообщение>"
 
 mod-chat:
   enabled: true
   prefix-symbol: "?"
   format: "<blue>[ModChat] <gray>%displayname%: <white>%message%"
-  usage: "<yellow>Использование: <white>/%command% <сообщение>"
 
 donor-chat:
   enabled: true
   prefix-symbol: "$"
   format: "<gold>[DonorChat] <gray>%displayname%: <white>%message%"
-  usage: "<yellow>Использование: <white>/%command% <сообщение>"
 
-joinquit:
+join-quit:
   enabled: true
-  disable:
-    join: false
-    quit: false
-  join: "<green>%player% <gray>зашел на сервер"
-  quit: "<red>%player% <gray>вышел с сервера"
+  disable-join: false
+  disable-quit: false
+  join-format: "<green>%player% <gray>зашел на сервер"
+  quit-format: "<red>%player% <gray>вышел с сервера"
 
 death:
   enabled: true
-  disable:
-    public: false
-    private: false
-  public: "<gray>%player% died"
-  private: "<gray>Вы умерли от <white>%killer%\n<gray>Координаты: <white>%x%<gray>, <white>%y%<gray>, <white>%z% <gray>(<white>%world%<gray>)"
+  disable-public: false
+  disable-private: false
+  public-format: "<gray>%player% died"
+  private-format: "<gray>Вы умерли от <white>%killer%\n<gray>Координаты: <white>%x%<gray>, <white>%y%<gray>, <white>%z% <gray>(<white>%world%<gray>)"
 
 advancement:
   enabled: true
   disable: false
-  message: "<gold>%player% <gray>получил достижение: <white>%advancement%"
+  format: "<gold>%player% <gray>получил достижение: <white>%advancement%"
 
-autoMessages:
+auto-messages:
   enabled: true
-  intervalSeconds: 300
+  interval-seconds: 300
   messages:
     - "<gradient:#00FFFF:#0088FF>https://t.me/vibestudiomc</gradient>"
 
 commands:
   cooldown-milliseconds: 1000
-
-messages:
-  reload: "<green>Конфигурация GlowChat успешно перезагружена!"
-  no-permission: "<red>У вас нет прав на выполнение этой команды."
-  usage: "<yellow>GlowChat <gray>— <white>/%command% reload"
-  cooldown: "<red>Пожалуйста, подождите перед следующим использованием команды."
