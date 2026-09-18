@@ -46,7 +46,7 @@ public class JoinQuitDeathListener implements Listener {
         plugin.getCooldownManager().remove(player.getUniqueId());
 
         GlowChatConfig config = plugin.getChatConfig();
-        if (!config.isQuitEnabled()) {
+        if (!config.isJoinEnabled()) {
             return;
         }
 
